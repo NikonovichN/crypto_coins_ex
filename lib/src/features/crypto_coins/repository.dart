@@ -1,9 +1,11 @@
-import 'package:crypto_coins_ex/src/api/app_api.dart';
 import 'package:dio/dio.dart';
 
+import '../../api/app_api.dart';
+import '../../common/common.dart';
+import 'dto.dart';
+
 abstract class CryptoCoinsRepository {
-  // TODO: add correct return type
-  Future<dynamic> fetch({required int limit, required int offset});
+  Future<List<CryptoCoinsDto>> fetch({required int limit, required int offset});
 }
 
 class CryptoCoinsRepositoryImpl implements CryptoCoinsRepository {
@@ -15,12 +17,18 @@ class CryptoCoinsRepositoryImpl implements CryptoCoinsRepository {
       _client = client;
 
   @override
-  // TODO: add correct return type
-  Future<dynamic> fetch({required int limit, required int offset}) async {
+  Future<List<CryptoCoinsDto>> fetch({required int limit, required int offset}) async {
     final response = await _client.get(
       'https://${_api.coinCapBasePath}/${_api.coinsPath}',
       queryParameters: {_api.keyParam: _api.key, 'limit': limit, 'offset': offset},
     );
-    print(response);
+
+    if (response.statusCode != 200) {
+      throw RepositoryException.httpError;
+    }
+
+    final List<dynamic> responseJson = response.data['data'];
+
+    return responseJson.map((c) => CryptoCoinsDto.fromJson(c)).toList();
   }
 }
