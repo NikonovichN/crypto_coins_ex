@@ -99,6 +99,10 @@ class SkillsScreenControllerImpl with AppLogger implements CryptoCoinsScreenCont
     emit(_state.copyWith(isLoading: stateCoinsIsEmpty, inProcess: !stateCoinsIsEmpty, error: null));
 
     try {
+      if (refresh && state.coins != null) {
+        state.coins!.clear();
+      }
+
       final repositoryData = await _repository.fetch(
         limit: _partitionToLoad,
         offset: state.coins?.length ?? 0,
@@ -106,7 +110,7 @@ class SkillsScreenControllerImpl with AppLogger implements CryptoCoinsScreenCont
 
       info(repositoryData.toString());
 
-      List<Coin> cryptoCoins = refresh ? [] : List.from(state.coins ?? []);
+      List<Coin> cryptoCoins = List.from(state.coins ?? []);
 
       cryptoCoins.addAll(repositoryData.map((c) => c.toScreenData()).toList());
 

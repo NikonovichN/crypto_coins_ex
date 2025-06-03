@@ -38,30 +38,33 @@ class CryptoCoinsPage extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
             }
 
-            return ListView.builder(
-              itemCount: (state.coins?.length ?? 0) + 1,
-              itemBuilder: (context, index) {
-                if (state.coins == null) {
-                  return refreshButton;
-                }
-
-                if (index == state.coins!.length) {
-                  if (state.inProcess) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    screenController.loadData();
-                    return const SizedBox.shrink();
+            return RefreshIndicator(
+              onRefresh: () => screenController.loadData(refresh: true),
+              child: ListView.builder(
+                itemCount: (state.coins?.length ?? 0) + 1,
+                itemBuilder: (context, index) {
+                  if (state.coins == null) {
+                    return refreshButton;
                   }
-                }
 
-                final coin = state.coins![index];
+                  if (index == state.coins!.length) {
+                    if (state.inProcess) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      screenController.loadData();
+                      return const SizedBox.shrink();
+                    }
+                  }
 
-                return _CoinCard(
-                  name: Text(coin.name),
-                  price: Text(coin.priceUsd),
-                  color: coin.color,
-                );
-              },
+                  final coin = state.coins![index];
+
+                  return _CoinCard(
+                    name: Text(coin.name),
+                    price: Text(coin.priceUsd),
+                    color: coin.color,
+                  );
+                },
+              ),
             );
           },
         ),
