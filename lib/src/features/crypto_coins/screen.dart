@@ -1,8 +1,9 @@
-import 'package:crypto_coins_ex/src/api/app_api.dart';
-import 'package:crypto_coins_ex/src/ui_kit/atoms/app_fonts.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import 'package:dio/dio.dart';
+
+import '../../../src/api/app_api.dart';
+import '../../../src/ui_kit/atoms/app_fonts.dart';
 import 'controller.dart';
 import 'repository.dart';
 
@@ -28,7 +29,7 @@ class CryptoCoinsPage extends StatelessWidget {
               onPressed: () => screenController.loadData(refresh: true),
             );
 
-            if (snapshot.data == null) {
+            if (snapshot.data == null || snapshot.data?.error != null) {
               return refreshButton;
             }
 
